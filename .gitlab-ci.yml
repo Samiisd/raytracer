@@ -16,4 +16,4 @@ test:
       - cd build
       - cmake ..
       - make -j 8
-      - ./test/divider_tests
+      - ./test/tests
