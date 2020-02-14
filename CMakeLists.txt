@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.2)
 
-project(template-ultra)
+project(raytracer)
 
 FIND_PACKAGE(Threads REQUIRED)
 
@@ -11,14 +11,14 @@ set(CMAKE_CXX_FLAGS_DEBUG  "${CMAKE_CXX_FLAGS} -O0 -g --coverage")
 
 set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR})
 
-set(DIVISIBLE_INSTALL_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
-set(DIVISIBLE_INSTALL_BIN_DIR ${PROJECT_SOURCE_DIR}/bin)
-set(DIVISIBLE_INSTALL_LIB_DIR ${PROJECT_SOURCE_DIR}/lib)
+set(RAYTRACER_INSTALL_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
+set(RAYTRACER_INSTALL_BIN_DIR ${PROJECT_SOURCE_DIR}/bin)
+set(RAYTRACER_INSTALL_LIB_DIR ${PROJECT_SOURCE_DIR}/lib)
 
-set(DIVISION_HEADERS_DIR ${PROJECT_SOURCE_DIR}/src/division)
+set(VECTOR_HEADERS_DIR ${PROJECT_SOURCE_DIR}/src/vector)
 
-include_directories(${DIVISIBLE_INSTALL_INCLUDE_DIR})
-include_directories(${DIVISION_HEADERS_DIR})
+include_directories(${RAYTRACER_INSTALL_INCLUDE_DIR})
+include_directories(${VECTOR_HEADERS_DIR})
 
 add_subdirectory(src)
 add_subdirectory(test)

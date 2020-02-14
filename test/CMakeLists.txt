@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.2)
-project(divider_tests)
+project(tests)
 
 find_package(GTest REQUIRED)
 
-include_directories(${DIVISION_HEADERS_DIR})
+include_directories(${VECTOR_HEADERS_DIR})
 
-set(SOURCE_FILES main.cpp src/divider_tests.cpp)
+set(SOURCE_FILES main.cpp
+        src/vector_tests.cpp)
 
-add_executable(divider_tests ${SOURCE_FILES})
-target_link_libraries(divider_tests division gtest pthread)
-install(TARGETS divider_tests DESTINATION bin)
-
+add_executable(tests ${SOURCE_FILES})
+target_link_libraries(tests vector gtest pthread)
+install(TARGETS tests DESTINATION bin)
