@@ -1,0 +1,19 @@
+image: gcc
+
+before_script:
+  - apt-get update -y
+  - apt-get install -y cmake libgtest-dev
+  - cd /usr/src/gtest/
+  - cmake -DBUILD_SHARED_LIBS=ON
+  - make -j 8
+  - cp *.so /usr/lib
+  - cd -
+
+test:
+  stage: test
+  script:
+      - mkdir build
+      - cd build
+      - cmake ..
+      - make -j 8
+      - ./test/divider_tests
