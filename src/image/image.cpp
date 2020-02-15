@@ -13,16 +13,17 @@ Pixel &Image::operator()(const size_t y, const size_t x) {
 }
 
 std::ostream &operator<<(std::ostream &out, const Image &im) {
-  out << "P6" << "\n"
+  out << "P3" << "\n"
   << im.width << "\t" << im.height << "\n"
-  << uint_fast8_t(-1) << "\n";
+  << static_cast<unsigned >(uint_fast8_t(-1)) << "\n";
 
-  for (size_t i = 0; i < im._buffer.size(); i++) {
+  out << im._buffer.at(0) << '\t';
+  for (size_t i = 1; i < im._buffer.size(); i++) {
     out << im._buffer.at(i);
-    if (i % im.width == 0)
-      out << "\n";
+    if ((i % im.width) == 0)
+      out << '\n';
     else
-      out << "\t";
+      out << '\t';
   }
 
   return out;

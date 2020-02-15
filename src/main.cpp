@@ -4,12 +4,12 @@
 
 
 int main() {
-  const size_t image_height = 400, image_width = 200;
+  const size_t image_height = 400, image_width = 400;
   Image result(image_height, image_width);
 
   for (size_t y = 0; y < image_height; y++)
     for (size_t x = 0; x < image_width; x++) {
-      uint_fast8_t p = ((y + x) % 2) * (uint_fast8_t)(-1);
+      uint_fast8_t p = ((x % 20) == 0 || (y % 15) == 0) * (uint_fast8_t)(-1);
       result(y, x) = Pixel{p, p, p};
     }
 
