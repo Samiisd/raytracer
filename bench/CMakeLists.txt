@@ -8,7 +8,6 @@ if (benchmark_FOUND)
     set(SOURCE_FILES src/vector_bench.cpp)
 
     add_executable(bench ${SOURCE_FILES})
-    target_link_libraries(bench vector benchmark::benchmark_main)
+    target_link_libraries(bench benchmark::benchmark_main)
     install(TARGETS bench DESTINATION bin)
 endif ()
-

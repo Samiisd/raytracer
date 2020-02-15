@@ -16,9 +16,11 @@ set(RAYTRACER_INSTALL_BIN_DIR ${PROJECT_SOURCE_DIR}/bin)
 set(RAYTRACER_INSTALL_LIB_DIR ${PROJECT_SOURCE_DIR}/lib)
 
 set(VECTOR_HEADERS_DIR ${PROJECT_SOURCE_DIR}/src/vector)
+set(IMAGE_HEADERS_DIR ${PROJECT_SOURCE_DIR}/src/image)
 
 include_directories(${RAYTRACER_INSTALL_INCLUDE_DIR})
 include_directories(${VECTOR_HEADERS_DIR})
+include_directories(${IMAGE_HEADERS_DIR})
 
 add_subdirectory(src)
 add_subdirectory(test)

@@ -9,5 +9,5 @@ set(SOURCE_FILES main.cpp
         src/vector_tests.cpp)
 
 add_executable(tests ${SOURCE_FILES})
-target_link_libraries(tests vector gtest pthread)
+target_link_libraries(tests gtest pthread)
 install(TARGETS tests DESTINATION bin)
