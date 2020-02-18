@@ -34,5 +34,11 @@ int _test() {
 int main() {
   const Sphere s(10.0f, {0, 0, 0});
   const Camera cam{{20, 0, 0}, {0, 0, 0}, {0, 1, 0}};
+  Image result(420, 420);
 
+  for (size_t y = 0; y < result.height; y++) {
+    for (size_t x = 0; x < result.width; x++) {
+      
+    }
+  }
 }

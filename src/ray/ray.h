@@ -25,6 +25,10 @@ public:
     return Vector3(_x * l, _y * l, _z * l);
   }
 
+  Vector3 operator*(const Vector3 &v) const {
+    return Vector3(_x * v._x, _y * v._y, _z * v._z);
+  }
+
   Vector3 operator+(const Vector3 &v) const {
     return Vector3(_x + v._x, _y + v._y, _z + v._z);
   }
