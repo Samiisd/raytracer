@@ -33,15 +33,15 @@ int _test() {
 
 int main() {
   const Sphere s(10.0f, {0, 0, 0});
-  Image result(200, 200);
+  Image result(1080, 400);
   const Camera cam{static_cast<float>(result.height),
                    static_cast<float>(result.width),
-                   {20, 1000, 0},
-                   {0, 0, 0},
+                   {20, 0, 0},
+                   {0, 10, 0},
                    Vector3(0, 1, 0).normalized(),
                    10,
-                   40,
-                   40};
+                   20,
+                   20};
 
   for (size_t y = 0; y < result.height; y++) {
     for (size_t x = 0; x < result.width; x++) {
