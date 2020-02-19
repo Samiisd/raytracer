@@ -14,10 +14,10 @@ using crV3 = const Vector3 &;
 class Camera {
 public:
   Camera(const float imHeight, const float imWidth, crV3 center, crV3 focus,
-         crV3 up, float focal, float fovX, float fovY)
+         crV3 up, float focal, float fov, float aspectRatio)
       : aspectRatio(imWidth / imHeight), eye(center),
-        H(2.0f * focal * std::tan(fovY / 2)),
-        W(2.0f * focal * std::tan(fovX / 2)),
+        H(2.0f * focal * std::tan(fov / 2)),
+        W(H * aspectRatio),
         up(up.normalized()), forward((focus - eye).normalized()), left(forward.cross(up)),
         C(eye + focal * forward), L(C + (left * W * 0.5f) + (up * H * 0.5f)),
         scaleY(H / imHeight), scaleX(W / imWidth) {}
