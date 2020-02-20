@@ -11,14 +11,15 @@ int main() {
                    static_cast<float>(result.width),
                    {60, 0, 0},
                    {0, 0, 0},
-                   Vec3(0, 1, 0).normalized(),
+                   {0, 1, 0},
                    0.05,
-                   20,
-                   16.0f/9.0f};
+                   60,
+                   16.0f / 9.0f};
 
   for (size_t y = 0; y < result.height; y++) {
     for (size_t x = 0; x < result.width; x++) {
-      const Ray r = {cam.eye,(cam.pixelToRay(static_cast<float>(y), static_cast<float>(x)) - cam.eye).normalized()};
+      const Ray r = {cam.eye(),
+                     (cam.pixelToWorld(y, x) - cam.eye()).normalized()};
       float t = s.intersect(r);
       if (t >= 0) {
         result(y, x) = {255, 255, 255};
