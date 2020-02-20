@@ -16,7 +16,7 @@ Camera::Camera(float imHeight, float imWidth, const Vec3 eye, const Vec3 focus,
   forward_ = (focus - eye).normalized();
   left_ = forward_.cross(up_);
 
-  float H = 2.0f * focal * std::tan(fov/2.0);
+  float H = 2.0f * focal * std::tan(fov/2.0f);
   float W = H * aspectRatio;
 
   C_ = eye + focal * forward_;

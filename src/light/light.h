@@ -25,5 +25,3 @@ public:
   using Light::Light;
 private:
 };
-
-void a() { PointLight b({1, 2, 3}); }

@@ -10,6 +10,8 @@
 
 class Object {
 public:
+  virtual ~Object() = default;
+
   [[nodiscard]] virtual float intersect(const Ray &r) const = 0;
   [[nodiscard]] virtual Vec3 normalAt(const Vec3 &p) const = 0;
   [[nodiscard]] virtual TextureMaterial textureAt(const Vec3 &p) const = 0;

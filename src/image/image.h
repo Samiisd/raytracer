@@ -2,8 +2,7 @@
 // Created by ultra on 2/14/20.
 //
 
-#ifndef RAYTRACER_IMAGE_H
-#define RAYTRACER_IMAGE_H
+#pragma once
 
 #include <cstdint>
 #include <vector>
@@ -29,5 +28,3 @@ public:
 private:
   std::vector<Color> _buffer;
 };
-
-#endif // RAYTRACER_IMAGE_H

@@ -4,6 +4,7 @@
 
 #include "object.h"
 
+
 static bool solveQuadratic(const float &a, const float &b, const float &c,
                            float &x0, float &x1) {
   float discriminant = b * b - 4 * a * c;
