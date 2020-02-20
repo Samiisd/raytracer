@@ -3,6 +3,7 @@ project(object C CXX)
 
 set(SOURCE_FILES
         object.h
+        texture.h
         object.cpp
         )
 

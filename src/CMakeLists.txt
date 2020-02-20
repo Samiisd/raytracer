@@ -5,7 +5,6 @@ add_subdirectory(light)
 add_subdirectory(camera)
 add_subdirectory(image)
 add_subdirectory(object)
-add_subdirectory(texture)
 add_subdirectory(renderer)
 set(SOURCE_FILES main.cpp)
 
