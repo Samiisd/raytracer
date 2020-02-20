@@ -2,7 +2,6 @@
 #include <image.h>
 #include <iostream>
 #include <object.h>
-#include <random>
 #include <ray.h>
 
 int main() {
@@ -12,7 +11,7 @@ int main() {
                    static_cast<float>(result.width),
                    {60, 0, 0},
                    {0, 0, 0},
-                   Vector3(0, 1, 0).normalized(),
+                   Vec3(0, 1, 0).normalized(),
                    0.05,
                    20,
                    16.0f/9.0f};

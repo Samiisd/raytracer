@@ -4,6 +4,6 @@
 
 #include "camera.h"
 
-Vector3 Camera::pixelToRay(float y, float x) const {
+Vec3 Camera::pixelToRay(float y, float x) const {
   return L - ((y * scaleY) * up + (x * scaleX) * left);
 }

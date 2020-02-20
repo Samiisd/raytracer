@@ -4,9 +4,14 @@
 
 #pragma once
 
-#include "ray.h"
+#include <camera.h>
+#include <light.h>
+#include <object.h>
+#include <ray.h>
+#include <vector>
 
-class Scene {
-public:
-private:
+struct Scene {
+  Camera camera;
+  std::vector<Object> objects;
+  std::vector<Light> lights;
 };

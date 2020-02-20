@@ -28,7 +28,7 @@ static bool solveQuadratic(const float &a, const float &b, const float &c,
 float Sphere::intersect(const Ray &r) const {
   float t0, t1;
 
-  const Vector3 L = r.origin - center;
+  const Vec3 L = r.origin - center;
 
   const float a = 1.0f, b = 2.0f * r.direction.dot(L),
               c = L.dot(L) - _radius_square;
@@ -39,10 +39,10 @@ float Sphere::intersect(const Ray &r) const {
   return t0 < 0 ? t1 : t0;
 }
 
-Vector3 Sphere::normalAt(const Vector3 &p) const {
+Vec3 Sphere::normalAt(const Vec3 &p) const {
   return (p - center).normalized();
 }
 
-TextureMaterial Sphere::textureAt(const Vector3 &p) const {
+TextureMaterial Sphere::textureAt(const Vec3 &p) const {
   return TextureMaterial();
 }

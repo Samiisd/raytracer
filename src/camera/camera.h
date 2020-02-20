@@ -9,7 +9,7 @@
 #include "image.h"
 #include "ray.h"
 
-using crV3 = const Vector3 &;
+using crV3 = const Vec3 &;
 
 class Camera {
 public:
@@ -22,17 +22,17 @@ public:
         C(eye + focal * forward), L(C + (left * W * 0.5f) + (up * H * 0.5f)),
         scaleY(H / imHeight), scaleX(W / imWidth) {}
 
-  [[nodiscard]] Vector3 pixelToRay(float y, float x) const;
+  [[nodiscard]] Vec3 pixelToRay(float y, float x) const;
 
   const float aspectRatio;
 
-  const Vector3 eye;
+  const Vec3 eye;
 
   const float H, W;
 
-  const Vector3 up, forward, left; // unary directional vectors
+  const Vec3 up, forward, left; // unary directional vectors
 
-  const Vector3 C, L; // Center pixel and Bottom Left pixel in world coordinates
+  const Vec3 C, L; // Center pixel and Bottom Left pixel in world coordinates
 
   const float scaleY, scaleX;
 };
