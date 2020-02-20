@@ -5,10 +5,10 @@
 #include "image.h"
 
 Image::Image(size_t height, size_t width): height(height), width(width) {
-  this->_buffer = std::vector<Pixel>(height * width);
+  this->_buffer = std::vector<Color>(height * width);
 }
 
-Pixel &Image::operator()(const size_t y, const size_t x) {
+Color &Image::operator()(const size_t y, const size_t x) {
   return this->_buffer[y * this->width + x];
 }
 

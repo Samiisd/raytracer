@@ -9,10 +9,10 @@
 #include <vector>
 #include <iostream>
 
-struct Pixel {
+struct Color {
     uint_fast8_t r, g, b;
 
-    friend std::ostream&operator<<(std::ostream& out, const Pixel& p) {
+    friend std::ostream&operator<<(std::ostream& out, const Color & p) {
         out << static_cast<unsigned>(p.r) << " " << static_cast<unsigned>(p.g) << " " << static_cast<unsigned>(p.b);
         return out;
     }
@@ -22,12 +22,12 @@ class Image {
 public:
   Image(size_t height, size_t width);
 
-  Pixel &operator()(size_t y, size_t x);
+  Color &operator()(size_t y, size_t x);
   const size_t height, width;
 
   friend std::ostream&operator<<(std::ostream& out, const Image& im);
 private:
-  std::vector<Pixel> _buffer;
+  std::vector<Color> _buffer;
 };
 
 #endif // RAYTRACER_IMAGE_H
