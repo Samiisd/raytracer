@@ -3,8 +3,6 @@
 //
 
 #include "renderer.h"
-#include <numeric>
-#include <typeinfo>
 
 Image Renderer::render() const {
   Image result(imHeight, imWidth);
@@ -27,40 +25,62 @@ Image Renderer::render() const {
   return result;
 }
 
-Renderer::hitPoint Renderer::castRay(const Ray &ray, const size_t depth) const {
-
+Renderer::rayHitInfo Renderer::castRay(const Ray &ray,
+                                       const size_t depth) const {
   std::shared_ptr<Object> hitObject = nullptr;
   float tMin = std::numeric_limits<float>::max();
 
   // Search the nearest collided object
   for (const auto &obj : scene.objects) {
     float t = obj->intersect(ray);
-    if (t >= 0 && t < tMin)
+    if (t >= 0.001 && t < tMin) {
       // FIXME: doing this will increase the ref counter, and thus call
       //  `thread.lock()`, which might be expensive we should replace
       //  `std::shared_ptr` by raw pointers
       hitObject = obj;
-    // FIXME-END
+      // FIXME-END
+      tMin = t;
+    }
   }
 
+  // returns if nothing has been hit
   if (!hitObject)
-    return hitPoint{{0, 0, 0}, std::min(tMin, -1.0f)};
+    return rayHitInfo{{0, 0, 0}, std::min(tMin, -1.0f)};
+
+  const Vec3 hitPoint = ray.origin + tMin * ray.direction;
+  const Vec3 hitPointNormal = hitObject->normalAt(hitPoint);
+  const auto reflectedRayHitInfo =
+      depth > 0 ? castRay({hitPoint, ray.direction * 2.0f *
+                                         ray.direction.cross(-hitPointNormal) *
+                                         hitPointNormal})
+                : rayHitInfo{{0, 0, 0}, -1.0f};
 
   // FIXME: `typeid` might be expensive, we must benchmark that part
-  const Vec2 uvMapping =
-      typeid(hitObject->texture) == typeid(UniformTexture)
-          ? Vec2{0.0f, 0.0f}
-          : hitObject->uvMapping(ray.origin + tMin * ray.direction);
+  const Vec2 uvMapping = typeid(hitObject->texture) == typeid(UniformTexture)
+                             ? Vec2{0.0f, 0.0f}
+                             : hitObject->uvMapping(hitPoint);
   // FIXME-END
 
-  // Calculate object illumination
-  Vec3 objColor = hitObject->texture->colorAt(uvMapping);
+  const auto &objTexture = hitObject->texture;
 
-  // FIXME: Compute object illumination
-  // FIXME-END
+  Vec3 objColor;
+  for (const auto &light : scene.lights) {
+    const Ray rayToLight{hitPoint, (light->position - hitPoint).normalized()};
 
-  if (depth != 0) {
-    // FIXME: should cast the reflected ray
+    // FIXME: binary shadow detection (shadow / not shadow) will result in
+    //        cut-edged shadows, we have to replace that by some kind of
+    //        progressive shadow
+    const auto hitLight = castRay(rayToLight);
+    if (!hitLight.hasHit())
+      continue;
+    // FIXME-END
+
+    objColor += objTexture->colorAt(uvMapping) *
+                    (objTexture->kdAt(uvMapping) *
+                     (hitObject->normalAt(hitPoint) * rayToLight.direction) *
+                     light->intensity) +
+                objTexture->ksAt(uvMapping) * light->intensity *
+                    (reflectedRayHitInfo.color * light->intensity);
   }
 
   return {objColor, tMin};

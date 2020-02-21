@@ -23,6 +23,9 @@ public:
   Vec2 operator*(const Vec2 &v) const { return {x_ * v.x_, y_ * v.y_}; }
   Vec2 operator+(const Vec2 &v) const { return {x_ + v.x_, y_ + v.y_}; }
   Vec2 operator-(const Vec2 &v) const { return {x_ - v.x_, y_ - v.y_}; }
+  Vec2 operator-() const { return {-x_, -y_}; }
+
+  Vec2 operator+=(const Vec2 &v) const { return this->operator+(v); }
 
   [[nodiscard]] T dot(const Vec2 &v) const { return x_ * v.x_ + y_ * v.y_; }
 
@@ -77,6 +80,10 @@ public:
   Vec3 operator-(const Vec3 &v) const {
     return {x_ - v.x_, y_ - v.y_, z_ - v.z_};
   }
+
+  Vec3 operator+=(const Vec3 &v) const { return this->operator+(v); }
+
+  Vec3 operator-() const { return {-x_, -y_, -z_}; }
 
   [[nodiscard]] T dot(const Vec3 &v) const {
     return x_ * v.x_ + y_ * v.y_ + z_ * v.z_;
