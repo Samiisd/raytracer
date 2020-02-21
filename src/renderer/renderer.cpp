@@ -33,7 +33,7 @@ Renderer::rayHitInfo Renderer::castRay(const Ray &ray,
   // Search the nearest collided object
   for (const auto &obj : scene.objects) {
     float t = obj->intersect(ray);
-    if (t >= 0.001 && t < tMin) {
+    if (t > 1e-3 && t < tMin) {
       // FIXME: doing this will increase the ref counter, and thus call
       //  `thread.lock()`, which might be expensive we should replace
       //  `std::shared_ptr` by raw pointers
@@ -53,7 +53,8 @@ Renderer::rayHitInfo Renderer::castRay(const Ray &ray,
   const Vec3 hitPoint = ray.origin + tMin * ray.direction;
   const Vec3 hitPointNormal = hitObject->normalAt(hitPoint);
   const Ray reflectedRay = {hitPoint, ray.direction * 2.0f *
-                                          ray.direction.dot(-hitPointNormal) * hitPointNormal};
+                                          ray.direction.dot(-hitPointNormal) *
+                                          hitPointNormal};
   const auto reflectedRayHitInfo = castRay(reflectedRay, depth - 1);
 
   // FIXME: `typeid` might be expensive, we must benchmark that part
@@ -89,5 +90,5 @@ Renderer::rayHitInfo Renderer::castRay(const Ray &ray,
             std::pow(reflectedRayHitInfo.color.dot(rayToLight.direction), _NS);
   }
 
-  return {objColor, tMin};
+  return {objColor.clamped(0, 1), tMin};
 }

@@ -5,7 +5,7 @@
 #include <texture.h>
 
 int main() {
-  const size_t imHeight = 270, imWidth = 480;
+  const size_t imHeight = 1080, imWidth = 1920;
 
   const Camera cam{imHeight,  imWidth, {30, 0, 0}, {0, 0, 0},
                    {0, 1, 0}, 1,    40,         16.0f / 9.0f};
@@ -17,7 +17,7 @@ int main() {
   scene.objects.push_back(std::make_shared<Sphere>(Sphere{red, 10.0f, {0, 0, 0}}));
   scene.objects.push_back(std::make_shared<Sphere>(Sphere{green, 5.0f, {0, 15, 0}}));
   scene.objects.push_back(std::make_shared<Sphere>(Sphere{blue, 13.0f, {12, -6, -13}}));
-  scene.lights.push_back(std::make_shared<Light>(Light({15, 20, 5})));
+  scene.lights.push_back(std::make_shared<Light>(Light({25, 20, 5})));
 
   const auto engine = Renderer(scene, imHeight, imWidth);
 
