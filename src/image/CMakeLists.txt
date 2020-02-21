@@ -3,7 +3,7 @@ project(image C CXX)
 
 set(SOURCE_FILES
         image.h
-        texture.cpp
+        image.cpp
         )
 
 add_library(image SHARED STATIC ${SOURCE_FILES})

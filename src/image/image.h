@@ -1,30 +1,18 @@
-//
-// Created by ultra on 2/14/20.
-//
-
 #pragma once
 
 #include <cstdint>
-#include <vector>
 #include <iostream>
-
-struct Color {
-    uint_fast8_t r, g, b;
-
-    friend std::ostream&operator<<(std::ostream& out, const Color & p) {
-        out << static_cast<unsigned>(p.r) << " " << static_cast<unsigned>(p.g) << " " << static_cast<unsigned>(p.b);
-        return out;
-    }
-};
+#include <ray.h>
+#include <vector>
 
 class Image {
 public:
   Image(size_t height, size_t width);
 
-  Color &operator()(size_t y, size_t x);
+  Vec3 &operator()(size_t y, size_t x);
   const size_t height, width;
 
   friend std::ostream&operator<<(std::ostream& out, const Image& im);
 private:
-  std::vector<Color> _buffer;
+  std::vector<Vec3> _buffer;
 };

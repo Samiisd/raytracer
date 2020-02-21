@@ -9,5 +9,5 @@ add_subdirectory(renderer)
 set(SOURCE_FILES main.cpp)
 
 add_executable(raytracer ${SOURCE_FILES})
-target_link_libraries(raytracer renderer camera light image object texture)
+target_link_libraries(raytracer renderer camera light image object)
 install(TARGETS raytracer DESTINATION ${RAYTRACER_INSTALL_BIN_DIR})

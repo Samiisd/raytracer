@@ -2,8 +2,8 @@
 
 #include <cmath>
 
-#include "image.h"
 #include "ray.h"
+#include "texture.h"
 
 class Camera {
 public:

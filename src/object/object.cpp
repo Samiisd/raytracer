@@ -4,7 +4,6 @@
 
 #include "object.h"
 
-
 static bool solveQuadratic(const float &a, const float &b, const float &c,
                            float &x0, float &x1) {
   float discriminant = b * b - 4 * a * c;
@@ -40,10 +39,10 @@ float Sphere::intersect(const Ray &r) const {
   return t0 < 0 ? t1 : t0;
 }
 
-Vec3 Sphere::normalAt(const Vec3 &p) const {
-  return (p - center).normalized();
-}
+Vec3 Sphere::normalAt(const Vec3 &p) const { return (p - center).normalized(); }
 
-TextureMaterial Sphere::textureAt(const Vec3 &p) const {
-  return TextureMaterial();
+Vec2 Sphere::uvMapping(const Vec3 &p) const {
+  const Vec3 d = (center - p).normalized();
+  return {static_cast<T>(0.5f + (std::atan2(d.z(), d.x()) / (2.0f * M_PI))),
+          static_cast<T>(0.5f - (std::asin(d.y()) / M_PI))};
 }
