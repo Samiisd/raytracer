@@ -4,7 +4,7 @@
 
 #include "renderer.h"
 
-Image Renderer::render() const {
+Image Renderer::render(const size_t depth) const {
   Image result(imHeight, imWidth);
 
   const Camera &camera = scene.camera;
@@ -18,7 +18,7 @@ Image Renderer::render() const {
       const Ray r = {camera.eye(),
                      (camera.pixelToWorld(y, x) - camera.eye()).normalized()};
 
-      result(y, x) = castRay(r).color;
+      result(y, x) = castRay(r, depth).color;
     }
   }
 
@@ -45,20 +45,22 @@ Renderer::rayHitInfo Renderer::castRay(const Ray &ray,
 
   // returns if nothing has been hit
   if (!hitObject)
-    return rayHitInfo{{0, 0, 0}, std::min(tMin, -1.0f)};
+    return rayHitInfo{{0, 0, 0}, -1.0f};
+
+  if (depth < 1)
+    return rayHitInfo{{0, 0, 0}, tMin};
 
   const Vec3 hitPoint = ray.origin + tMin * ray.direction;
   const Vec3 hitPointNormal = hitObject->normalAt(hitPoint);
-  const auto reflectedRayHitInfo =
-      depth > 0 ? castRay({hitPoint, ray.direction * 2.0f *
-                                         ray.direction.cross(-hitPointNormal) *
-                                         hitPointNormal})
-                : rayHitInfo{{0, 0, 0}, -1.0f};
+  const Ray reflectedRay = {hitPoint, ray.direction * 2.0f *
+                                          ray.direction.dot(-hitPointNormal) * hitPointNormal};
+  const auto reflectedRayHitInfo = castRay(reflectedRay, depth - 1);
 
   // FIXME: `typeid` might be expensive, we must benchmark that part
-  const Vec2 uvMapping = typeid(hitObject->texture) == typeid(UniformTexture)
-                             ? Vec2{0.0f, 0.0f}
-                             : hitObject->uvMapping(hitPoint);
+  const Vec2 uvMapping =
+      typeid(hitObject->texture.get()) == typeid(UniformTexture)
+          ? Vec2{0.0f, 0.0f}
+          : hitObject->uvMapping(hitPoint);
   // FIXME-END
 
   const auto &objTexture = hitObject->texture;
@@ -71,16 +73,20 @@ Renderer::rayHitInfo Renderer::castRay(const Ray &ray,
     //        cut-edged shadows, we have to replace that by some kind of
     //        progressive shadow
     const auto hitLight = castRay(rayToLight);
-    if (!hitLight.hasHit())
+    if (hitLight.hasHit())
       continue;
     // FIXME-END
 
-    objColor += objTexture->colorAt(uvMapping) *
-                    (objTexture->kdAt(uvMapping) *
-                     (hitObject->normalAt(hitPoint) * rayToLight.direction) *
-                     light->intensity) +
-                objTexture->ksAt(uvMapping) * light->intensity *
-                    (reflectedRayHitInfo.color * light->intensity);
+    const auto _C = objTexture->colorAt(uvMapping);
+    const auto _KD = objTexture->kdAt(uvMapping);
+    const auto _KS = objTexture->ksAt(uvMapping);
+    const auto _NS = objTexture->nsAt(uvMapping);
+    const auto _LI = light->intensity;
+    const auto _N = hitObject->normalAt(hitPoint);
+    objColor =
+        objColor + _C * (_KD * _N.dot(rayToLight.direction) * _LI) +
+        _KS * light->intensity *
+            std::pow(reflectedRayHitInfo.color.dot(rayToLight.direction), _NS);
   }
 
   return {objColor, tMin};

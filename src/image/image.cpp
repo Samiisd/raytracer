@@ -23,7 +23,7 @@ std::ostream &operator<<(std::ostream &out, const Image &im) {
 
   printPixel(im._buffer.at(0)) << '\t';
   for (size_t i = 1; i < im._buffer.size(); i++) {
-    printPixel(im._buffer.at(i));
+    printPixel(im._buffer.at(i).majored(1.0f));
     if ((i % im.width) == 0)
       out << '\n';
     else

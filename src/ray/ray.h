@@ -37,15 +37,19 @@ public:
     return {x_ / norm, y_ / norm};
   }
 
-  [[nodiscard]] Vec2 clamped(float low, float high) {
+  [[nodiscard]] Vec2 pow(float e) const {
+    return {std::pow(x_, e), std::pow(y_, e)};
+  }
+
+  [[nodiscard]] Vec2 clamped(float low, float high) const {
     return {std::clamp(x_, low, high), std::clamp(y_, low, high)};
   }
 
-  [[nodiscard]] Vec2 majored(float high) {
-    return {std::max(x_, high), std::max(y_, high)};
+  [[nodiscard]] Vec2 majored(float high) const {
+    return {std::min(x_, high), std::min(y_, high)};
   }
 
-  [[nodiscard]] Vec2 minored(float low) {
+  [[nodiscard]] Vec2 minored(float low) const {
     return {std::max(x_, low), std::max(y_, low)};
   }
 
@@ -77,6 +81,10 @@ public:
     return {x_ + v.x_, y_ + v.y_, z_ + v.z_};
   }
 
+  Vec3 operator+(const float t) const {
+    return {x_ + t, y_ + t, z_ + t};
+  }
+
   Vec3 operator-(const Vec3 &v) const {
     return {x_ - v.x_, y_ - v.y_, z_ - v.z_};
   }
@@ -94,6 +102,10 @@ public:
             x_ * v.y_ - y_ * v.x_};
   }
 
+  [[nodiscard]] Vec3 pow(float e) const {
+    return {std::pow(x_, e), std::pow(y_, e), std::pow(z_, e)};
+  }
+
   [[nodiscard]] Vec3 normalized() {
     if (!norm_.has_value())
       norm_ = std::sqrt(x_ * x_ + y_ * y_ + z_ * z_);
@@ -102,18 +114,19 @@ public:
     return {x_ / norm, y_ / norm, z_ / norm};
   }
 
-  [[nodiscard]] Vec3 clamped(float low, float high) {
+  [[nodiscard]] Vec3 clamped(float low, float high) const {
     return {std::clamp(x_, low, high), std::clamp(y_, low, high),
             std::clamp(z_, low, high)};
   }
 
-  [[nodiscard]] Vec3 majored(float high) {
-    return {std::max(x_, high), std::max(y_, high), std::max(z_, high)};
+  [[nodiscard]] Vec3 majored(float high) const {
+    return {std::min(x_, high), std::min(y_, high), std::min(z_, high)};
   }
 
-  [[nodiscard]] Vec3 minored(float low) {
+  [[nodiscard]] Vec3 minored(float low) const {
     return {std::max(x_, low), std::max(y_, low), std::max(z_, low)};
   }
+
 
   [[nodiscard]] T x() const { return x_; }
   [[nodiscard]] T y() const { return y_; }

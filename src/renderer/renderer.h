@@ -14,7 +14,7 @@ public:
   explicit Renderer(Scene scene, size_t imHeight, size_t imWidth)
       : scene(std::move(scene)), imHeight(imHeight), imWidth(imWidth) {}
 
-  [[nodiscard]] Image render() const;
+  [[nodiscard]] Image render(const size_t depth = 1) const;
 
   const Scene scene;
   const size_t imHeight, imWidth;
@@ -25,7 +25,7 @@ private:
     const float t = -1.0f;
 
     [[nodiscard]] bool hasHit() const {
-      return t < 0.0f;
+      return t > 0.0f;
     }
   };
 
