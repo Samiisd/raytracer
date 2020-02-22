@@ -6,6 +6,7 @@
 #include <optional>
 
 using T = float;
+const T EPSILON = 1.0e-4f;
 
 class Vec2 {
 public:
@@ -25,9 +26,13 @@ public:
   Vec2 operator-(const Vec2 &v) const { return {x_ - v.x_, y_ - v.y_}; }
   Vec2 operator-() const { return {-x_, -y_}; }
 
-  Vec2 operator+=(const Vec2 &v) const { return this->operator+(v); }
+  void operator+=(const Vec2 &v) {
+    x_ += v.x_;
+    y_ += v.y_;
+  }
 
   [[nodiscard]] T dot(const Vec2 &v) const { return x_ * v.x_ + y_ * v.y_; }
+  [[nodiscard]] T sum() const { return x_ + y_; }
 
   [[nodiscard]] Vec2 normalized() {
     if (!norm_.has_value())
@@ -81,21 +86,31 @@ public:
     return {x_ + v.x_, y_ + v.y_, z_ + v.z_};
   }
 
-  Vec3 operator+(const float t) const {
-    return {x_ + t, y_ + t, z_ + t};
-  }
+  Vec3 operator+(const float t) const { return {x_ + t, y_ + t, z_ + t}; }
 
   Vec3 operator-(const Vec3 &v) const {
     return {x_ - v.x_, y_ - v.y_, z_ - v.z_};
   }
 
-  Vec3 operator+=(const Vec3 &v) const { return this->operator+(v); }
+  bool operator==(const Vec3 &v) {
+    return x_ == v.x_ && y_ == v.y_ && z_ == v.z_;
+  }
+  bool operator!=(const Vec3 &v) {
+    return x_ != v.x_ || y_ != v.y_ || z_ != v.z_;
+  }
+
+  void operator+=(const Vec3 &v) {
+    x_ += v.x_;
+    y_ += v.y_;
+    z_ += v.z_;
+  }
 
   Vec3 operator-() const { return {-x_, -y_, -z_}; }
 
   [[nodiscard]] T dot(const Vec3 &v) const {
     return x_ * v.x_ + y_ * v.y_ + z_ * v.z_;
   }
+  [[nodiscard]] T sum() const { return x_ + y_ + z_; }
 
   [[nodiscard]] Vec3 cross(const Vec3 &v) const {
     return {y_ * v.z_ - z_ * v.y_, x_ * v.z_ - z_ * v.x_,
@@ -126,7 +141,6 @@ public:
   [[nodiscard]] Vec3 minored(float low) const {
     return {std::max(x_, low), std::max(y_, low), std::max(z_, low)};
   }
-
 
   [[nodiscard]] T x() const { return x_; }
   [[nodiscard]] T y() const { return y_; }

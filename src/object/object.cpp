@@ -31,7 +31,7 @@ float Sphere::intersect(const Ray &r) const {
   const Vec3 L = r.origin - center;
 
   const float a = 1.0f, b = 2.0f * r.direction.dot(L),
-              c = L.dot(L) - _radius_square;
+              c = L.dot(L) - radius_square_;
 
   if (!solveQuadratic(a, b, c, t0, t1))
     return -1.0f;
@@ -46,3 +46,23 @@ Vec2 Sphere::uvMapping(const Vec3 &p) const {
   return {static_cast<T>(0.5f + (std::atan2(d.z(), d.x()) / (2.0f * M_PI))),
           static_cast<T>(0.5f - (std::asin(d.y()) / M_PI))};
 }
+bool Sphere::contains(const Vec3 &p) const {
+  const Vec3 distance = p - center;
+  return std::fabs((distance * distance).sum() - radius_square_) < EPSILON;
+}
+
+float Plane::intersect(const Ray &r) const {
+    const float nu = normal_.dot(r.direction);
+
+    if (std::fabs(nu) < EPSILON)
+      return this->contains(r.origin) ? 0.0f : -1.0f;
+
+    const auto t = normal_.dot(p0_ - r.origin)/nu;
+    return t;
+}
+
+Vec3 Plane::normalAt(const Vec3 &) const { return normal_; }
+
+Vec2 Plane::uvMapping(const Vec3 &) const { return {}; }
+
+bool Plane::contains(const Vec3 &p) const { return std::fabs(normal_.dot(p0_ - p)) < EPSILON; }

@@ -20,6 +20,7 @@ public:
   [[nodiscard]] virtual float intersect(const Ray &r) const = 0;
   [[nodiscard]] virtual Vec3 normalAt(const Vec3 &p) const = 0;
   [[nodiscard]] virtual Vec2 uvMapping(const Vec3 &p) const = 0;
+  [[nodiscard]] virtual bool contains(const Vec3 &p) const = 0;
 
   const std::shared_ptr<TextureMaterial> texture;
 
@@ -31,15 +32,32 @@ public:
   Sphere(std::shared_ptr<TextureMaterial> texture, const float radius,
          const Vec3 center)
       : Object::Object(std::move(texture)), center(center), radius(radius),
-        _radius_square(radius * radius) {}
+        radius_square_(radius * radius) {}
 
-  [[nodiscard]] float intersect(const Ray &r) const override;
-  [[nodiscard]] Vec3 normalAt(const Vec3 &p) const override;
-  [[nodiscard]] Vec2 uvMapping(const Vec3 &p) const override;
+  [[nodiscard]] float intersect(const Ray &r) const final;
+  [[nodiscard]] Vec3 normalAt(const Vec3 &p) const final;
+  [[nodiscard]] Vec2 uvMapping(const Vec3 &p) const final;
+  [[nodiscard]] bool contains(const Vec3 &p) const final;
 
   const Vec3 center;
   const float radius;
 
 private:
-  const float _radius_square;
+  const float radius_square_;
+};
+
+class Plane : public Object {
+public:
+  Plane(std::shared_ptr<TextureMaterial> texture, Vec3 normal, Vec3 samplePoint)
+      : Object::Object(std::move(texture)), normal_(normal.normalized()),
+        p0_(samplePoint) {}
+
+  [[nodiscard]] float intersect(const Ray &r) const final;
+  [[nodiscard]] Vec3 normalAt(const Vec3 &) const final;
+  [[nodiscard]] Vec2 uvMapping(const Vec3 &p) const final;
+  [[nodiscard]] bool contains(const Vec3 &p) const final;
+
+private:
+  Vec3 normal_;
+  Vec3 p0_;
 };

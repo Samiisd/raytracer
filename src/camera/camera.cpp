@@ -16,6 +16,9 @@ Camera::Camera(float imHeight, float imWidth, const Vec3 eye, const Vec3 focus,
   forward_ = (focus - eye).normalized();
   left_ = forward_.cross(up_);
 
+  // convert degree FOV in radians
+  fov = fov * static_cast<float>(M_PI / 180.0);
+
   float H = 2.0f * focal * std::tan(fov/2.0f);
   float W = H * aspectRatio;
 
