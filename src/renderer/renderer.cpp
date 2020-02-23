@@ -38,8 +38,8 @@ Renderer::rayHitInfo Renderer::castRay(const Ray &ray,
 
   const Vec3 hitPoint = ray.origin + tMin * ray.direction;
   const Vec3 hitPointNormal = hitObject->normalAt(hitPoint);
-  const Ray reflectedRay = {hitPoint, ray.direction * 2.0f *
-                                          ray.direction.dot(-hitPointNormal) *
+  const Ray reflectedRay = {hitPoint, ray.direction - 2.0f *
+                            hitPointNormal.dot(ray.direction) *
                                           hitPointNormal};
   const auto reflectedRayHitInfo = castRay(reflectedRay, depth - 1);
 
@@ -67,9 +67,12 @@ Renderer::rayHitInfo Renderer::castRay(const Ray &ray,
                   : vHitPointToLight.z() / vHitPointToLightDirection.z();
 
     const Ray rayToLight{hitPoint, vHitPointToLightDirection};
-    std::tie(hitObjectBeforeLight, tObjectBeforeLight) = searchNearestIntersection(
-        rayToLight,
-        [tLight](const std::shared_ptr<Object> &, float t) -> bool { return t < tLight; });
+    std::tie(hitObjectBeforeLight, tObjectBeforeLight) =
+        searchNearestIntersection(
+            rayToLight,
+            [tLight](const std::shared_ptr<Object> &, float t) -> bool {
+              return t < tLight;
+            });
 
     // FIXME: binary shadow detection (shadow / not shadow) will result in
     //        cut-edged shadows, we have to replace that by some kind of
@@ -82,14 +85,19 @@ Renderer::rayHitInfo Renderer::castRay(const Ray &ray,
     const auto _KD = objTexture->kdAt(uvMapping);
     const auto _KS = objTexture->ksAt(uvMapping);
     const auto _NS = objTexture->nsAt(uvMapping);
-    const auto _LI = light->intensity;
+    const auto _LI = light->intensity / tLight;
     const auto _N = hitObject->normalAt(hitPoint);
-    objColor = objColor +
-               _C * (_KD * std::max(0.0f, _N.dot(rayToLight.direction)) * _LI) +
-               _KS * _LI *
-                   std::pow(std::max(0.0f, reflectedRayHitInfo.color.dot(
-                                               rayToLight.direction)),
-                            _NS);
+
+    const auto _diffuseLight =
+        _KD * std::max(0.0f, _N.dot(rayToLight.direction)) * _LI;
+
+    const auto _specularLight =
+        _KS * _LI *
+        std::pow(
+            std::max(0.0f, reflectedRay.direction.dot(rayToLight.direction)),
+            _NS);
+
+    objColor += _C * _diffuseLight + reflectedRayHitInfo.color * _specularLight;
   }
 
   return {objColor.majored(1.0f), tMin};
