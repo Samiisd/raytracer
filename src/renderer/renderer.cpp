@@ -25,11 +25,7 @@ Image Renderer::render(const size_t depth) const {
 Vec3 Renderer::castRay(const Ray &ray, const size_t depth) const {
   const auto [hitObject, tMin] = searchNearestIntersection(ray);
 
-  // returns if nothing has been hit
   if (!hitObject)
-    return {0, 0, 0};
-
-  if (depth < 1)
     return {0, 0, 0};
 
   const Vec3 hitPoint = ray.origin + tMin * ray.direction;
@@ -37,13 +33,13 @@ Vec3 Renderer::castRay(const Ray &ray, const size_t depth) const {
   const Ray reflectedRay = {
       hitPoint, ray.direction -
                     2.0f * hitPointNormal.dot(ray.direction) * hitPointNormal};
-  const auto reflectedRayHitInfo = castRay(reflectedRay, depth - 1);
+  const auto reflectedRayHitInfo =
+      depth == 1 ? Vec3{0, 0, 0} : castRay(reflectedRay, depth - 1);
 
   // FIXME: `typeid` might be expensive, we must benchmark that part
-  const Vec2 uvMapping =
-      typeid(hitObject->texture) == typeid(UniformTexture)
-          ? Vec2{0.0f, 0.0f}
-          : hitObject->uvMapping(hitPoint);
+  const Vec2 uvMapping = typeid(hitObject->texture) == typeid(UniformTexture)
+                             ? Vec2{0.0f, 0.0f}
+                             : hitObject->uvMapping(hitPoint);
   // FIXME-END
 
   const auto &objTexture = hitObject->texture;
