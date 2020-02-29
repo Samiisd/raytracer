@@ -20,8 +20,6 @@ public:
 
   [[nodiscard]] virtual Intersection intersect(const Ray &r) const = 0;
   [[nodiscard]] virtual Vec3 normalAt(const Vec3 &p) const = 0;
-  [[nodiscard]] virtual Vec2 uvMapping(const Vec3 &p) const = 0;
-  [[nodiscard]] virtual bool contains(const Vec3 &p) const = 0;
 
   const TextureMaterial *texture;
 
@@ -30,15 +28,12 @@ protected:
 
 class Sphere : public Object {
 public:
-  Sphere(TextureMaterial *texture, const float radius,
-         const Vec3 center)
+  Sphere(TextureMaterial *texture, const float radius, const Vec3 center)
       : Object::Object(texture), center(center), radius(radius),
         radius_square_(radius * radius) {}
 
   [[nodiscard]] Intersection intersect(const Ray &r) const final;
   [[nodiscard]] Vec3 normalAt(const Vec3 &p) const final;
-  [[nodiscard]] Vec2 uvMapping(const Vec3 &p) const final;
-  [[nodiscard]] bool contains(const Vec3 &p) const final;
 
   const Vec3 center;
   const float radius;
@@ -55,8 +50,6 @@ public:
 
   [[nodiscard]] Intersection intersect(const Ray &r) const final;
   [[nodiscard]] Vec3 normalAt(const Vec3 &) const final;
-  [[nodiscard]] Vec2 uvMapping(const Vec3 &p) const final;
-  [[nodiscard]] bool contains(const Vec3 &p) const final;
 
 private:
   Vec3 normal_;
