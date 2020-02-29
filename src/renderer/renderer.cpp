@@ -23,24 +23,26 @@ Image Renderer::render(const size_t depth) const {
 }
 
 Vec3 Renderer::castRay(const Ray &ray, const size_t depth) const {
-  const auto [hitObject, uv, tMin] = searchNearestIntersection(ray);
+  const auto [obj, uvObj, tObj] = searchNearestIntersection(ray);
 
-  if (!hitObject)
+  if (!obj)
     return {0, 0, 0};
 
-  const Vec3 hitPoint = ray.origin + tMin * ray.direction;
-  const Vec3 hitPointNormal = hitObject->normalAt(hitPoint);
-  const Ray reflectedRay = {
-      hitPoint, ray.direction -
-                    2.0f * hitPointNormal.dot(ray.direction) * hitPointNormal};
-  const auto reflectedRayHitInfo =
+  const Vec3 P = ray.origin + tObj * ray.direction;
+  const Vec3 N = obj->normalAt(P);
+
+  const Ray reflectedRay = {P, ray.direction - 2.0f * N.dot(ray.direction) * N};
+  const Vec3 reflectedRayColor =
       depth == 1 ? Vec3{0, 0, 0} : castRay(reflectedRay, depth - 1);
 
-  const auto &objTexture = hitObject->texture;
+  const auto C = obj->texture->colorAt(uvObj);
+  const auto KD = obj->texture->kdAt(uvObj);
+  const auto KS = obj->texture->ksAt(uvObj);
+  const auto NS = obj->texture->nsAt(uvObj);
 
   Vec3 objColor;
   for (const auto &light : scene.lights) {
-    Vec3 vHitPointToLight = light->position - hitPoint;
+    Vec3 vHitPointToLight = light->position - P;
     Vec3 vHitPointToLightDirection = vHitPointToLight.normalized();
     const float tLight =
         vHitPointToLightDirection.x() > EPSILON
@@ -49,7 +51,7 @@ Vec3 Renderer::castRay(const Ray &ray, const size_t depth) const {
                   ? vHitPointToLight.y() / vHitPointToLightDirection.y()
                   : vHitPointToLight.z() / vHitPointToLightDirection.z();
 
-    const Ray rayToLight{hitPoint, vHitPointToLightDirection};
+    const Ray rayToLight{P, vHitPointToLightDirection};
     const auto [hitObjectBeforeLight, uv, tObjectBeforeLight] =
         searchNearestIntersection(
             rayToLight,
@@ -62,23 +64,19 @@ Vec3 Renderer::castRay(const Ray &ray, const size_t depth) const {
       continue;
     // FIXME-END
 
-    const auto _C = objTexture->colorAt(uv);
-    const auto _KD = objTexture->kdAt(uv);
-    const auto _KS = objTexture->ksAt(uv);
-    const auto _NS = objTexture->nsAt(uv);
+
     const auto _LI = light->intensity / tLight;
-    const auto _N = hitObject->normalAt(hitPoint);
 
     const auto _diffuseLight =
-        _KD * std::max(0.0f, _N.dot(rayToLight.direction)) * _LI;
+        KD * std::max(0.0f, N.dot(rayToLight.direction)) * _LI;
 
     const auto _specularLight =
-        _KS * _LI *
+        KS * _LI *
         std::pow(
             std::max(0.0f, reflectedRay.direction.dot(rayToLight.direction)),
-            _NS);
+            NS);
 
-    objColor += _C * _diffuseLight + reflectedRayHitInfo * _specularLight;
+    objColor += C * _diffuseLight + reflectedRayColor * _specularLight;
   }
 
   return objColor.majored(1.0f);
