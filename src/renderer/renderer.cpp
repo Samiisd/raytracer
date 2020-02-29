@@ -9,7 +9,8 @@ Image Renderer::render(const size_t depth) const {
 
   const Camera &camera = scene.camera;
 
-  // Iterate over all pixels of the image
+// Iterate over all pixels of the image
+#pragma omp parallel for default(none) shared(result)
   for (size_t y = 0; y < imHeight; y++) {
     for (size_t x = 0; x < imWidth; x++) {
       Ray r = {camera.eye(),

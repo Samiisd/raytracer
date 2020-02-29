@@ -1,12 +1,14 @@
 #include "image.h"
 
 Image::Image(size_t height, size_t width) : height(height), width(width) {
-  this->_buffer = std::vector<Vec3>(height * width);
+  this->_buffer = new Vec3[height * width];
 }
 
 Vec3 &Image::operator()(const size_t y, const size_t x) {
   return this->_buffer[y * this->width + x];
 }
+
+Vec3 &Image::operator[](const size_t i) { return this->_buffer[i]; }
 
 std::ostream &operator<<(std::ostream &out, const Image &im) {
   auto printPixel = [&out](const Vec3 &pixel) -> std::ostream & {
@@ -21,9 +23,9 @@ std::ostream &operator<<(std::ostream &out, const Image &im) {
       << im.width << "\t" << im.height << "\n"
       << 255 << "\n";
 
-  printPixel(im._buffer.at(0)) << '\t';
-  for (size_t i = 1; i < im._buffer.size(); i++) {
-    printPixel(im._buffer.at(i));
+  printPixel(im._buffer[0]) << '\t';
+  for (size_t i = 1; i < im.height * im.width; i++) {
+    printPixel(im._buffer[i]);
     if ((i % im.width) == 0)
       out << '\n';
     else
@@ -32,3 +34,5 @@ std::ostream &operator<<(std::ostream &out, const Image &im) {
 
   return out;
 }
+
+Image::~Image() { delete[] _buffer; }
