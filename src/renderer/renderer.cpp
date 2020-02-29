@@ -4,13 +4,13 @@
 
 #include "renderer.h"
 
-Image Renderer::render(const size_t depth, const size_t nbAntiAliasingRay) {
+Image Renderer::render(const size_t depth, const size_t nbAntiAliasingRay,
+                       const bool multithreads) {
   Image result(imHeight, imWidth);
 
   const Camera &camera = scene.camera;
 
-// Iterate over all pixels of the image
-#pragma omp parallel for default(none) shared(result)
+#pragma omp parallel for default(none) shared(result) if (multithreads)
   for (size_t y = 0; y < imHeight; y++) {
     for (size_t x = 0; x < imWidth; x++) {
       Ray r = {camera.eye(),

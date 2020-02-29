@@ -11,7 +11,7 @@ using std::chrono::duration_cast;
 using std::chrono::high_resolution_clock;
 
 int main() {
-  const size_t imHeight = 1080, imWidth = 1920;
+  const size_t imHeight = 1080UL << 3UL, imWidth = 1920ULL << 3UL;
 
   const Camera cam{imHeight,  imWidth, {0, 1, -4}, {0, 0, 0},
                    {0, 1, 0}, 10,      70,         16.0f / 9.0f};
@@ -45,7 +45,7 @@ int main() {
 
   std::cout << "generating scene...\n";
   const auto startTime = std::chrono::high_resolution_clock::now();
-  const Image result = engine.render(3);
+  const Image result = engine.render(3, 50);
   const auto endTime = std::chrono::high_resolution_clock::now();
   std::cout << "took: "
             << duration_cast<duration<double, std::milli>>(endTime - startTime)

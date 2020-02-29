@@ -13,7 +13,7 @@ public:
       : scene(std::move(scene)), imHeight(imHeight), imWidth(imWidth), rd_(),
         gen_(rd_()), dis_(std::uniform_real_distribution<>(0.0f, 1.0f)) {}
 
-  [[nodiscard]] Image render(size_t depth = 1, size_t nbAntiAliasingRay = 0);
+  [[nodiscard]] Image render(size_t depth = 1, size_t nbAntiAliasingRay = 0, bool multithreads = true);
 
   const Scene scene;
   const size_t imHeight, imWidth;
