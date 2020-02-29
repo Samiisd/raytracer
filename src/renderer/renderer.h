@@ -18,7 +18,8 @@ public:
   const size_t imHeight, imWidth;
 
 private:
-  [[nodiscard]] std::pair<const Object *, float> searchNearestIntersection(
+  [[nodiscard]] std::tuple<const Object *, Vec2, float>
+  searchNearestIntersection(
       const Ray &ray,
       const std::function<bool(const Object*, float)>
           &stopException = [](const Object*, float) -> bool {

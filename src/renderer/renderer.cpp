@@ -23,7 +23,7 @@ Image Renderer::render(const size_t depth) const {
 }
 
 Vec3 Renderer::castRay(const Ray &ray, const size_t depth) const {
-  const auto [hitObject, tMin] = searchNearestIntersection(ray);
+  const auto [hitObject, uv, tMin] = searchNearestIntersection(ray);
 
   if (!hitObject)
     return {0, 0, 0};
@@ -35,12 +35,6 @@ Vec3 Renderer::castRay(const Ray &ray, const size_t depth) const {
                     2.0f * hitPointNormal.dot(ray.direction) * hitPointNormal};
   const auto reflectedRayHitInfo =
       depth == 1 ? Vec3{0, 0, 0} : castRay(reflectedRay, depth - 1);
-
-  // FIXME: `typeid` might be expensive, we must benchmark that part
-  const Vec2 uvMapping = typeid(hitObject->texture) == typeid(UniformTexture)
-                             ? Vec2{0.0f, 0.0f}
-                             : hitObject->uvMapping(hitPoint);
-  // FIXME-END
 
   const auto &objTexture = hitObject->texture;
 
@@ -56,7 +50,7 @@ Vec3 Renderer::castRay(const Ray &ray, const size_t depth) const {
                   : vHitPointToLight.z() / vHitPointToLightDirection.z();
 
     const Ray rayToLight{hitPoint, vHitPointToLightDirection};
-    const auto [hitObjectBeforeLight, tObjectBeforeLight] =
+    const auto [hitObjectBeforeLight, uv, tObjectBeforeLight] =
         searchNearestIntersection(
             rayToLight,
             [tLight](const Object *, float t) -> bool { return t < tLight; });
@@ -68,10 +62,10 @@ Vec3 Renderer::castRay(const Ray &ray, const size_t depth) const {
       continue;
     // FIXME-END
 
-    const auto _C = objTexture->colorAt(uvMapping);
-    const auto _KD = objTexture->kdAt(uvMapping);
-    const auto _KS = objTexture->ksAt(uvMapping);
-    const auto _NS = objTexture->nsAt(uvMapping);
+    const auto _C = objTexture->colorAt(uv);
+    const auto _KD = objTexture->kdAt(uv);
+    const auto _KS = objTexture->ksAt(uv);
+    const auto _NS = objTexture->nsAt(uv);
     const auto _LI = light->intensity / tLight;
     const auto _N = hitObject->normalAt(hitPoint);
 
@@ -89,12 +83,13 @@ Vec3 Renderer::castRay(const Ray &ray, const size_t depth) const {
 
   return objColor.majored(1.0f);
 }
-std::pair<const Object *, float> Renderer::searchNearestIntersection(
+std::tuple<const Object *, Vec2, float> Renderer::searchNearestIntersection(
     const Ray &ray,
     const std::function<bool(const Object *, float)> &stopException) const {
 
   Object *hitObject = nullptr;
   float tMin = std::numeric_limits<float>::max();
+  Vec2 uvMin = {-1.0f, -1.0f};
 
   // Search the nearest collided object
   for (const auto &obj : scene.objects) {
@@ -104,11 +99,12 @@ std::pair<const Object *, float> Renderer::searchNearestIntersection(
       continue;
 
     if (stopException(obj, t))
-      return {obj, t};
+      return {obj, uv, t};
 
     hitObject = obj;
     tMin = t;
+    uvMin = uv;
   }
 
-  return {hitObject, tMin};
+  return {hitObject, uvMin, tMin};
 }
