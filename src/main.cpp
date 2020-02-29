@@ -1,9 +1,14 @@
 #include <camera.h>
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <object.h>
 #include <renderer.h>
 #include <texture.h>
+
+using std::chrono::duration;
+using std::chrono::duration_cast;
+using std::chrono::high_resolution_clock;
 
 int main() {
   const size_t imHeight = 1080, imWidth = 1920;
@@ -38,8 +43,20 @@ int main() {
 
   auto engine = Renderer(scene, imHeight, imWidth);
 
-  std::ofstream("/home/ultra/projects/raytracer/result.ppm")
-      << engine.render(3);
+  std::cout << "generating scene...\n";
+  const auto startTime = std::chrono::high_resolution_clock::now();
+  const Image result = engine.render(3);
+  const auto endTime = std::chrono::high_resolution_clock::now();
+  std::cout << "took: "
+            << duration_cast<duration<double, std::milli>>(endTime - startTime)
+                   .count()
+            << " ms ("
+            << duration_cast<duration<double, std::nano>>(endTime - startTime)
+                       .count() /
+                   (double)(imHeight * imWidth)
+            << " ns/pixel)" << std::endl;
+
+  std::ofstream("/home/ultra/projects/raytracer/result.ppm") << result;
 
   while (!scene.lights.empty()) {
     delete scene.lights.back();
