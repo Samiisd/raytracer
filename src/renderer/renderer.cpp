@@ -15,15 +15,14 @@ Image Renderer::render(const size_t depth) const {
       Ray r = {camera.eye(),
                (camera.pixelToWorld(y, x) - camera.eye()).normalized()};
 
-      result(y, x) = castRay(r, depth).color;
+      result(y, x) = castRay(r, depth);
     }
   }
 
   return result;
 }
 
-Renderer::rayHitInfo Renderer::castRay(const Ray &ray,
-                                       const size_t depth) const {
+Vec3 Renderer::castRay(const Ray &ray, const size_t depth) const {
   std::shared_ptr<Object> hitObject;
   float tMin;
 
@@ -31,16 +30,16 @@ Renderer::rayHitInfo Renderer::castRay(const Ray &ray,
 
   // returns if nothing has been hit
   if (!hitObject)
-    return rayHitInfo{{0, 0, 0}, -1.0f};
+    return {0,0,0};
 
   if (depth < 1)
-    return rayHitInfo{{0, 0, 0}, tMin};
+    return {0,0,0};
 
   const Vec3 hitPoint = ray.origin + tMin * ray.direction;
   const Vec3 hitPointNormal = hitObject->normalAt(hitPoint);
-  const Ray reflectedRay = {hitPoint, ray.direction - 2.0f *
-                            hitPointNormal.dot(ray.direction) *
-                                          hitPointNormal};
+  const Ray reflectedRay = {
+      hitPoint, ray.direction -
+                    2.0f * hitPointNormal.dot(ray.direction) * hitPointNormal};
   const auto reflectedRayHitInfo = castRay(reflectedRay, depth - 1);
 
   // FIXME: `typeid` might be expensive, we must benchmark that part
@@ -97,10 +96,10 @@ Renderer::rayHitInfo Renderer::castRay(const Ray &ray,
             std::max(0.0f, reflectedRay.direction.dot(rayToLight.direction)),
             _NS);
 
-    objColor += _C * _diffuseLight + reflectedRayHitInfo.color * _specularLight;
+    objColor += _C * _diffuseLight + reflectedRayHitInfo * _specularLight;
   }
 
-  return {objColor.majored(1.0f), tMin};
+  return objColor.majored(1.0f);
 }
 
 std::pair<const std::shared_ptr<Object> &, float>
