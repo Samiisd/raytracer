@@ -10,6 +10,6 @@ if (benchmark_FOUND)
             src/bench_rendering.cpp)
 
     add_executable(bench ${SOURCE_FILES})
-    target_link_libraries(bench benchmark::benchmark_main object renderer image camera)
+    target_link_libraries(bench benchmark::benchmark_main object renderer image)
     install(TARGETS bench DESTINATION bin)
 endif ()
