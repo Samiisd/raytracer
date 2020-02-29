@@ -6,7 +6,7 @@
 #include <texture.h>
 
 int main() {
-  const size_t imHeight = 1080 / (1 << 3), imWidth = 1920 / (1 << 3);
+  const size_t imHeight = 1080, imWidth = 1920;
 
   const Camera cam{imHeight,  imWidth, {0, 1, -4}, {0, 0, 0},
                    {0, 1, 0}, 10,      70,         16.0f / 9.0f};
@@ -33,12 +33,13 @@ int main() {
       new Sphere(cyan, 0.3, {0.5, 0.3, -1.5}),
   };
 
-  scene.lights = {new Light({5, 3, -5}, {1, 1, 1}, 3), new Light({-1, 2, 2})};
+  scene.lights = {new Light({4.99, 3, -5}, {1, 1, 1}, 3),
+                  new Light({-1, 2, 2})};
 
   auto engine = Renderer(scene, imHeight, imWidth);
 
   std::ofstream("/home/ultra/projects/raytracer/result.ppm")
-      << engine.render(2);
+      << engine.render(3);
 
   while (!scene.lights.empty()) {
     delete scene.lights.back();

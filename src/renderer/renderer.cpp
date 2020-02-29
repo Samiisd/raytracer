@@ -40,36 +40,26 @@ Vec3 Renderer::castRay(const Ray &ray, const size_t depth) const {
   const auto KS = obj->texture->ksAt(uvObj);
   const auto NS = obj->texture->nsAt(uvObj);
 
-  Vec3 objColor;
+  Vec3 objColor = {0, 0, 0};
   for (const auto &light : scene.lights) {
-    Vec3 vHitPointToLight = light->position - P;
-    Vec3 vHitPointToLightDirection = vHitPointToLight.normalized();
-    const float tLight =
-        vHitPointToLightDirection.x() > EPSILON
-            ? vHitPointToLight.x() / vHitPointToLightDirection.x()
-            : vHitPointToLightDirection.y() > EPSILON
-                  ? vHitPointToLight.y() / vHitPointToLightDirection.y()
-                  : vHitPointToLight.z() / vHitPointToLightDirection.z();
+    Vec3 vToLight = light->position - P;
+    const float tLight = vToLight.norm();
 
-    const Ray rayToLight{P, vHitPointToLightDirection};
-    const auto [hitObjectBeforeLight, uv, tObjectBeforeLight] =
-        searchNearestIntersection(
-            rayToLight,
-            [tLight](const Object *, float t) -> bool { return t < tLight; });
+    const Ray rayToLight{P, vToLight.normalized()};
+    const auto [objBeforeLight, _, tObjBeforeLight] = searchNearestIntersection(
+        rayToLight,
+        [tLight](const Object *, float t) -> bool { return t < tLight; });
 
     // FIXME: binary shadow detection (shadow / not shadow) will result in
     //        cut-edged shadows, we have to replace that by some kind of
     //        progressive shadow
-    if (tObjectBeforeLight < tLight)
+    if (objBeforeLight && tObjBeforeLight - tLight < EPSILON)
       continue;
     // FIXME-END
 
-
     const auto _LI = light->intensity / tLight;
-
     const auto _diffuseLight =
         KD * std::max(0.0f, N.dot(rayToLight.direction)) * _LI;
-
     const auto _specularLight =
         KS * _LI *
         std::pow(
