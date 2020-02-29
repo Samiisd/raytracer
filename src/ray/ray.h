@@ -34,12 +34,16 @@ public:
   [[nodiscard]] T dot(const Vec2 &v) const { return x_ * v.x_ + y_ * v.y_; }
   [[nodiscard]] T sum() const { return x_ + y_; }
 
-  [[nodiscard]] Vec2 normalized() {
-    if (!norm_.has_value())
+  [[nodiscard]] float norm() {
+    if (norm_ < 0.0f)
       norm_ = std::sqrt(x_ * x_ + y_ * y_);
 
-    float norm = *norm_;
-    return {x_ / norm, y_ / norm};
+    return norm_;
+  }
+
+  [[nodiscard]] Vec2 normalized() {
+    float n = norm();
+    return {x_ / n, y_ / n};
   }
 
   [[nodiscard]] Vec2 pow(float e) const {
@@ -62,7 +66,7 @@ public:
   [[nodiscard]] T y() const { return y_; }
 
 private:
-  std::optional<float> norm_;
+  float norm_ = -1.0f;
   T x_{}, y_{};
 };
 
@@ -121,12 +125,16 @@ public:
     return {std::pow(x_, e), std::pow(y_, e), std::pow(z_, e)};
   }
 
-  [[nodiscard]] Vec3 normalized() {
-    if (!norm_.has_value())
+  [[nodiscard]] float norm() {
+    if (norm_ < 0.0f)
       norm_ = std::sqrt(x_ * x_ + y_ * y_ + z_ * z_);
 
-    float norm = *norm_;
-    return {x_ / norm, y_ / norm, z_ / norm};
+    return norm_;
+  }
+
+  [[nodiscard]] Vec3 normalized() {
+    float n = norm();
+    return {x_ / n, y_ / n, z_ / n};
   }
 
   [[nodiscard]] Vec3 clamped(float low, float high) const {
@@ -147,7 +155,7 @@ public:
   [[nodiscard]] T z() const { return z_; }
 
 private:
-  std::optional<float> norm_;
+  float norm_ = -1.0f;
   T x_{}, y_{}, z_{};
 };
 
