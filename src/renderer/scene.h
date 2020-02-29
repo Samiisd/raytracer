@@ -8,8 +8,8 @@
 #include <utility>
 #include <vector>
 
-using ObjList = std::vector<std::shared_ptr<Object>>;
-using LightList = std::vector<std::shared_ptr<Light>>;
+using ObjList = std::vector<Object *>;
+using LightList = std::vector<Light *>;
 
 struct Scene {
   explicit Scene(const Camera &camera) : camera(camera) {}

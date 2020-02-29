@@ -18,11 +18,10 @@ public:
   const size_t imHeight, imWidth;
 
 private:
-  [[nodiscard]] std::pair<const std::shared_ptr<Object> &, float>
-  searchNearestIntersection(
+  [[nodiscard]] std::pair<const Object *, float> searchNearestIntersection(
       const Ray &ray,
-      const std::function<bool(const std::shared_ptr<Object> &, float)>
-          &stopException = [](const std::shared_ptr<Object> &, float) -> bool {
+      const std::function<bool(const Object*, float)>
+          &stopException = [](const Object*, float) -> bool {
         return false;
       }) const;
   [[nodiscard]] Vec3 castRay(const Ray &ray, size_t depth = 0) const;

@@ -4,7 +4,7 @@
 
 using namespace std;
 
-const auto white = std::make_shared<UniformTexture>(UniformTexture({1, 1, 1}, 1, 5, 1, 1, 0));
+const auto white = new UniformTexture({1, 1, 1}, 1, 5, 1, 1, 0);
 
 static void BM_IntersectSphereCollision(benchmark::State &state) {
   // Bench setup

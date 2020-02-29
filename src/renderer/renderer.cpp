@@ -23,17 +23,14 @@ Image Renderer::render(const size_t depth) const {
 }
 
 Vec3 Renderer::castRay(const Ray &ray, const size_t depth) const {
-  std::shared_ptr<Object> hitObject;
-  float tMin;
-
-  std::tie(hitObject, tMin) = searchNearestIntersection(ray);
+  const auto [hitObject, tMin] = searchNearestIntersection(ray);
 
   // returns if nothing has been hit
   if (!hitObject)
-    return {0,0,0};
+    return {0, 0, 0};
 
   if (depth < 1)
-    return {0,0,0};
+    return {0, 0, 0};
 
   const Vec3 hitPoint = ray.origin + tMin * ray.direction;
   const Vec3 hitPointNormal = hitObject->normalAt(hitPoint);
@@ -44,7 +41,7 @@ Vec3 Renderer::castRay(const Ray &ray, const size_t depth) const {
 
   // FIXME: `typeid` might be expensive, we must benchmark that part
   const Vec2 uvMapping =
-      typeid(hitObject->texture.get()) == typeid(UniformTexture)
+      typeid(hitObject->texture) == typeid(UniformTexture)
           ? Vec2{0.0f, 0.0f}
           : hitObject->uvMapping(hitPoint);
   // FIXME-END
@@ -53,9 +50,6 @@ Vec3 Renderer::castRay(const Ray &ray, const size_t depth) const {
 
   Vec3 objColor;
   for (const auto &light : scene.lights) {
-    std::shared_ptr<Object> hitObjectBeforeLight;
-    float tObjectBeforeLight;
-
     Vec3 vHitPointToLight = light->position - hitPoint;
     Vec3 vHitPointToLightDirection = vHitPointToLight.normalized();
     const float tLight =
@@ -66,12 +60,10 @@ Vec3 Renderer::castRay(const Ray &ray, const size_t depth) const {
                   : vHitPointToLight.z() / vHitPointToLightDirection.z();
 
     const Ray rayToLight{hitPoint, vHitPointToLightDirection};
-    std::tie(hitObjectBeforeLight, tObjectBeforeLight) =
+    const auto [hitObjectBeforeLight, tObjectBeforeLight] =
         searchNearestIntersection(
             rayToLight,
-            [tLight](const std::shared_ptr<Object> &, float t) -> bool {
-              return t < tLight;
-            });
+            [tLight](const Object *, float t) -> bool { return t < tLight; });
 
     // FIXME: binary shadow detection (shadow / not shadow) will result in
     //        cut-edged shadows, we have to replace that by some kind of
@@ -101,13 +93,11 @@ Vec3 Renderer::castRay(const Ray &ray, const size_t depth) const {
 
   return objColor.majored(1.0f);
 }
-
-std::pair<const std::shared_ptr<Object> &, float>
-Renderer::searchNearestIntersection(
+std::pair<const Object *, float> Renderer::searchNearestIntersection(
     const Ray &ray,
-    const std::function<bool(const std::shared_ptr<Object> &, float)>
-        &stopException) const {
-  std::shared_ptr<Object> hitObject = nullptr;
+    const std::function<bool(const Object *, float)> &stopException) const {
+
+  Object *hitObject = nullptr;
   float tMin = std::numeric_limits<float>::max();
 
   // Search the nearest collided object
@@ -120,11 +110,7 @@ Renderer::searchNearestIntersection(
     if (stopException(obj, t))
       return {obj, t};
 
-    // FIXME: doing this will increase the ref counter, and thus call
-    //  `thread.lock()`, which might be expensive we should replace
-    //  `std::shared_ptr` by raw pointers
     hitObject = obj;
-    // FIXME-END
     tMin = t;
   }
 

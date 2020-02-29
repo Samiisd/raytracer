@@ -16,24 +16,23 @@ class Object {
 public:
   virtual ~Object() = default;
 
-  explicit Object(std::shared_ptr<TextureMaterial> texture)
-      : texture(std::move(texture)) {}
+  explicit Object(TextureMaterial *texture) : texture(texture) {}
 
   [[nodiscard]] virtual Intersection intersect(const Ray &r) const = 0;
   [[nodiscard]] virtual Vec3 normalAt(const Vec3 &p) const = 0;
   [[nodiscard]] virtual Vec2 uvMapping(const Vec3 &p) const = 0;
   [[nodiscard]] virtual bool contains(const Vec3 &p) const = 0;
 
-  const std::shared_ptr<TextureMaterial> texture;
+  const TextureMaterial *texture;
 
 protected:
 };
 
 class Sphere : public Object {
 public:
-  Sphere(std::shared_ptr<TextureMaterial> texture, const float radius,
+  Sphere(TextureMaterial *texture, const float radius,
          const Vec3 center)
-      : Object::Object(std::move(texture)), center(center), radius(radius),
+      : Object::Object(texture), center(center), radius(radius),
         radius_square_(radius * radius) {}
 
   [[nodiscard]] Intersection intersect(const Ray &r) const final;
@@ -50,8 +49,8 @@ private:
 
 class Plane : public Object {
 public:
-  Plane(std::shared_ptr<TextureMaterial> texture, Vec3 normal, Vec3 samplePoint)
-      : Object::Object(std::move(texture)), normal_(normal.normalized()),
+  Plane(TextureMaterial *texture, Vec3 normal, Vec3 samplePoint)
+      : Object::Object(texture), normal_(normal.normalized()),
         p0_(samplePoint) {}
 
   [[nodiscard]] Intersection intersect(const Ray &r) const final;
