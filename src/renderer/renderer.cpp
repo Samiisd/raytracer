@@ -4,7 +4,7 @@
 
 #include "renderer.h"
 
-Image Renderer::render(const size_t depth) const {
+Image Renderer::render(const size_t depth, const size_t nbAntiAliasingRay) {
   Image result(imHeight, imWidth);
 
   const Camera &camera = scene.camera;
@@ -16,7 +16,16 @@ Image Renderer::render(const size_t depth) const {
       Ray r = {camera.eye(),
                (camera.pixelToWorld(y, x) - camera.eye()).normalized()};
 
-      result(y, x) = castRay(r, depth);
+      Vec3 color = castRay(r, depth);
+      for (size_t k = 0; k < nbAntiAliasingRay; k++) {
+        const float dy = dis_(gen_), dx = dis_(gen_);
+        r.direction =
+            (camera.pixelToWorld(y + dy, x + dx) - camera.eye()).normalized();
+        color += castRay(r, depth);
+      }
+
+      result(y, x) =
+          color * (1.0f / static_cast<float>(1.0f + nbAntiAliasingRay));
     }
   }
 
