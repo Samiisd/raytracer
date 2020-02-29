@@ -10,6 +10,8 @@
 #include <optional>
 #include <utility>
 
+using Intersection = std::pair<Vec2, float>;
+
 class Object {
 public:
   virtual ~Object() = default;
@@ -17,7 +19,7 @@ public:
   explicit Object(std::shared_ptr<TextureMaterial> texture)
       : texture(std::move(texture)) {}
 
-  [[nodiscard]] virtual float intersect(const Ray &r) const = 0;
+  [[nodiscard]] virtual Intersection intersect(const Ray &r) const = 0;
   [[nodiscard]] virtual Vec3 normalAt(const Vec3 &p) const = 0;
   [[nodiscard]] virtual Vec2 uvMapping(const Vec3 &p) const = 0;
   [[nodiscard]] virtual bool contains(const Vec3 &p) const = 0;
@@ -34,7 +36,7 @@ public:
       : Object::Object(std::move(texture)), center(center), radius(radius),
         radius_square_(radius * radius) {}
 
-  [[nodiscard]] float intersect(const Ray &r) const final;
+  [[nodiscard]] Intersection intersect(const Ray &r) const final;
   [[nodiscard]] Vec3 normalAt(const Vec3 &p) const final;
   [[nodiscard]] Vec2 uvMapping(const Vec3 &p) const final;
   [[nodiscard]] bool contains(const Vec3 &p) const final;
@@ -52,7 +54,7 @@ public:
       : Object::Object(std::move(texture)), normal_(normal.normalized()),
         p0_(samplePoint) {}
 
-  [[nodiscard]] float intersect(const Ray &r) const final;
+  [[nodiscard]] Intersection intersect(const Ray &r) const final;
   [[nodiscard]] Vec3 normalAt(const Vec3 &) const final;
   [[nodiscard]] Vec2 uvMapping(const Vec3 &p) const final;
   [[nodiscard]] bool contains(const Vec3 &p) const final;

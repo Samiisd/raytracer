@@ -3,6 +3,7 @@
 #include <image.h>
 #include <scene.h>
 
+#include <functional>
 #include <random>
 #include <utility>
 

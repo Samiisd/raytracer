@@ -113,20 +113,20 @@ Renderer::searchNearestIntersection(
 
   // Search the nearest collided object
   for (const auto &obj : scene.objects) {
-    float t = obj->intersect(ray);
+    const auto [uv, t] = obj->intersect(ray);
 
-    if (t > EPSILON && t < tMin) {
+    if (t <= EPSILON || t >= tMin)
+      continue;
 
-      if (stopException(obj, t))
-        return {obj, t};
+    if (stopException(obj, t))
+      return {obj, t};
 
-      // FIXME: doing this will increase the ref counter, and thus call
-      //  `thread.lock()`, which might be expensive we should replace
-      //  `std::shared_ptr` by raw pointers
-      hitObject = obj;
-      // FIXME-END
-      tMin = t;
-    }
+    // FIXME: doing this will increase the ref counter, and thus call
+    //  `thread.lock()`, which might be expensive we should replace
+    //  `std::shared_ptr` by raw pointers
+    hitObject = obj;
+    // FIXME-END
+    tMin = t;
   }
 
   return {hitObject, tMin};

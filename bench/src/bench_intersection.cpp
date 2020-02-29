@@ -12,10 +12,7 @@ static void BM_IntersectSphereCollision(benchmark::State &state) {
   const Ray ray{{20, 20, 20}, Vec3(-13, -13, -13).normalized()};
 
   for (auto _ : state) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-result"
-    s.intersect(ray);
-#pragma clang diagnostic pop
+    auto r = s.intersect(ray);
   }
 }
 static void BM_IntersectSphereNoCollision(benchmark::State &state) {
@@ -24,10 +21,7 @@ static void BM_IntersectSphereNoCollision(benchmark::State &state) {
   const Ray ray{{20, 20, 20}, Vec3(1239, 122, 4325).normalized()};
 
   for (auto _ : state) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-result"
-    s.intersect(ray);
-#pragma clang diagnostic pop
+    auto t = s.intersect(ray);
   }
 }
 

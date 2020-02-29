@@ -46,10 +46,7 @@ static void BM_DefaultSceneRendering_1080_1920_depth3(benchmark::State &state) {
   auto engine = Renderer(scene, imHeight, imWidth);
 
   for (auto _ : state) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-result"
-    engine.render(3);
-#pragma clang diagnostic pop
+    Image A = engine.render(3);
   }
 }
 
@@ -63,10 +60,7 @@ static void BM_DefaultSceneRendering_1080_1920_depth1(benchmark::State &state) {
   auto engine = Renderer(scene, imHeight, imWidth);
 
   for (auto _ : state) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-result"
-    engine.render(1);
-#pragma clang diagnostic pop
+    Image a = engine.render(1);
   }
 }
 
@@ -80,10 +74,7 @@ static void BM_DefaultSceneRendering_1080_1920_depth5(benchmark::State &state) {
   auto engine = Renderer(scene, imHeight, imWidth);
 
   for (auto _ : state) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-result"
-    engine.render(5);
-#pragma clang diagnostic pop
+    Image a = engine.render(5);
   }
 }
 static void BM_DefaultSceneRendering_135_240_depth3(benchmark::State &state) {
@@ -96,10 +87,7 @@ static void BM_DefaultSceneRendering_135_240_depth3(benchmark::State &state) {
   auto engine = Renderer(scene, imHeight, imWidth);
 
   for (auto _ : state) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-result"
-    engine.render(3);
-#pragma clang diagnostic pop
+    Image a = engine.render(3);
   }
 }
 
@@ -113,10 +101,7 @@ static void BM_EmptySceneRendering_1080_1920_depth3(benchmark::State &state) {
   auto engine = Renderer(scene, imHeight, imWidth);
 
   for (auto _ : state) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-result"
-    engine.render(3);
-#pragma clang diagnostic pop
+    Image a =engine.render(3);
   }
 }
 
@@ -132,10 +117,7 @@ BM_SceneWithOneObjectRendering_1080_1920_depth3(benchmark::State &state) {
   auto engine = Renderer(scene, imHeight, imWidth);
 
   for (auto _ : state) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-result"
-    engine.render(3);
-#pragma clang diagnostic pop
+    Image a = engine.render(3);
   }
 }
 
