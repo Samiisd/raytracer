@@ -10,7 +10,7 @@ Image Renderer::render(const size_t depth, const size_t nbAntiAliasingRay,
 
   const Camera &camera = scene.camera;
 
-#pragma omp parallel for default(none) shared(result) if (multithreads)
+#pragma omp parallel for default(none) shared(result, camera, nbAntiAliasingRay, depth) if (multithreads)
   for (size_t y = 0; y < imHeight; y++) {
     for (size_t x = 0; x < imWidth; x++) {
       Ray r = {camera.eye(),
@@ -49,6 +49,7 @@ Vec3 Renderer::castRay(const Ray &ray, const size_t depth) const {
   const auto KD = obj->texture->kdAt(uvObj);
   const auto KS = obj->texture->ksAt(uvObj);
   const auto NS = obj->texture->nsAt(uvObj);
+  const auto reflectivity = obj->texture->reflectivityAt(uvObj);
 
   Vec3 objColor = {0, 0, 0};
   for (const auto &light : scene.lights) {
@@ -76,7 +77,7 @@ Vec3 Renderer::castRay(const Ray &ray, const size_t depth) const {
             std::max(0.0f, reflectedRay.direction.dot(rayToLight.direction)),
             NS);
 
-    objColor += C * _diffuseLight + reflectedRayColor * _specularLight;
+    objColor += (1.0 - reflectivity) * C * _diffuseLight + reflectivity *reflectedRayColor * _specularLight;
   }
 
   return objColor.majored(1.0f);
